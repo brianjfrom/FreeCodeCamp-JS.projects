@@ -1,0 +1,30 @@
+Html:
+
+<audio id="audio-player" src="path/to/your/song.mp3"></audio>
+<div id="time-display">
+  <span id="current-time">0:00</span> / <span id="total-time">0:00</span>
+</div>
+
+
+JS:
+
+const audioPlayer = document.getElementById('audio-player');
+const currentTimeDisplay = document.getElementById('current-time');
+const totalTimeDisplay = document.getElementById('total-time');
+
+// Function to format time in minutes and seconds
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+// Update the total duration when metadata is loaded
+audioPlayer.addEventListener('loadedmetadata', () => {
+    totalTimeDisplay.textContent = formatTime(audioPlayer.duration);
+});
+
+// Update the current time as the audio plays
+audioPlayer.addEventListener('timeupdate', () => {
+    currentTimeDisplay.textContent = formatTime(audioPlayer.currentTime);
+});
