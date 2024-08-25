@@ -10,7 +10,7 @@ const titleInput = document.getElementById("title-input");
 const dateInput = document.getElementById("date-input");
 const descriptionInput = document.getElementById("description-input");
 
-const taskData = [];
+const taskData = JSON.parse(localStorage.getItem("data")) || [];
 let currentTask = {};
 
 const addOrUpdateTask = () => {
@@ -28,6 +28,8 @@ const addOrUpdateTask = () => {
     } else {
         taskData[dataArrIndex] = taskObj;
     }
+
+    localStorage.setItem("data", JSON.stringify(taskData));
 
     updateTaskContainer();
     reset()
@@ -54,6 +56,8 @@ const deleteTask = (buttonEl) => {
     const dataArrIndex = taskData.findIndex((item) => item.id === buttonEl.parentElement.id);
     buttonEl.parentElement.remove();
     taskData.splice(dataArrIndex, 1);
+
+    localStorage.setItem("data", JSON.stringify(taskData));
 };
 
 const editTask = (buttonEl) => {
@@ -70,6 +74,9 @@ const editTask = (buttonEl) => {
 };
 
 const reset = () => {
+
+    addOrUpdateTaskBtn.innerText = "Add Task"
+
     titleInput.value = '';
     dateInput.value = '';
     descriptionInput.value = '';
@@ -77,9 +84,14 @@ const reset = () => {
     currentTask = {};
 }
 
+if (taskData.length) {
+    updateTaskContainer()
+}
+
 openTaskFormBtn.addEventListener("click", () => {
     taskForm.classList.toggle("hidden")
 });
+
 
 closeTaskFormBtn.addEventListener("click", () => {
     const formInputsContainValues = titleInput.value || dateInput.value || descriptionInput.value;
@@ -110,3 +122,20 @@ taskForm.addEventListener("submit", (e) => {
 
 })
 
+// HOW TO USE LOCAL STORAGE:
+
+// const myTaskArr = [
+//     { task: "Walk the Dog", date: "22-04-2022" },
+//     { task: "Read some books", date: "02-11-2023" },
+//     { task: "Watch football", date: "10-08-2021" },
+//   ];
+
+// localStorage.setItem("data", JSON.stringify(myTaskArr));
+// const getTaskArr = localStorage.getItem("data")
+// console.log(getTaskArr)
+
+// const getTaskArrObj = JSON.parse(localStorage.getItem("data"));
+// console.log(getTaskArrObj);
+
+// localStorage.removeItem("data");
+// localStorage.clear();
