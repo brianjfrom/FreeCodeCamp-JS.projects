@@ -1,45 +1,31 @@
 const convertBtn = document.getElementById("convert-btn");
 const number = document.getElementById("number");
 const output = document.getElementById("output");
-const hidden = document.getElementsByClassName("hidden");
 
 
-convertBtn.addEventListener("click", () => {
-    if (number.value === "") {
-        output.style.display = "block";
-        return output.textContent = "Please enter a valid number"
-    } else if (parseInt(number.value) <= 0) {
-        output.textContent = "Please enter a number greater then or equal to 1";
-        output.style.display = "block";
-    } else if (parseInt(number.value) >= 3999) {
+const handleConversion = () => {
+    const numberValue = parseInt(number.value);
+
+    if (isNaN(numberValue)) {
+        output.textContent = "Please enter a valid number";
+    } else if (numberValue <= 0) {
+        output.textContent = "Please enter a number greater than or equal to 1";
+    } else if (numberValue > 3999) {
         output.textContent = "Please enter a number less than or equal to 3999";
-        output.style.display = "block";
     } else {
-        output.textContent = intoRomanNumerals(parseInt(number.value));
-        output.style.display = "block";
+        output.textContent = intoRomanNumerals(numberValue);
     }
+    output.style.display = "block"
+}
 
-}); 
+convertBtn.addEventListener("click", handleConversion);
 
 number.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-        if (number.value === "") {
-            output.style.display = "block";
-            return output.textContent = "Please enter a valid number"
-        } else if (parseInt(number.value) <= 0) {
-            output.textContent = "Please enter a number greater then or equal to 1";
-            output.style.display = "block";
-        } else if (parseInt(number.value) >= 3999) {
-            output.textContent = "Please enter a number less than or equal to 3999";
-            output.style.display = "block";
-        } else {
-            output.textContent = intoRomanNumerals(parseInt(number.value));
-            output.style.display = "block";
-        }
+        e.preventDefault()
+        handleConversion()
     }
-})
-
-
+});
 
 const intoRomanNumerals = (num) => {
     
