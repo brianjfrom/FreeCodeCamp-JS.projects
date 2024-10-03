@@ -30,7 +30,7 @@ const evalFormula = (x, cells) => {
     //     };
     //     return inner
     // };
-// this is a test...
+// this is a test... and another test
     const elemValue = num => character => idToText(character + num);
     // example of combining functions params
     const addCharacters = (character1) => character2 => num => charRange(character1, character2).map(elemValue(num));
