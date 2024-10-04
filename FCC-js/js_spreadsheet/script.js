@@ -29,7 +29,8 @@ const median = (nums) => {
 const spreadsheetFunctions = {
     sum,
     average,
-    median
+    median,
+    even: nums => nums.filter(isEven); 
 };
 
 const applyFunction = str => {
@@ -39,6 +40,7 @@ const applyFunction = str => {
     const functionCall = /([a-z0-9]*)\(([0-9., ]*)\)(?!.*\()/i;
     const toNumberList = args => args.split(',').map(parseFloat);
     const apply = (fn, args) => spreadsheetFunctions[fn.toLowerCase()](toNumberList(args));
+    return str2.replace(functionCall, (match, fn, args) => spreadsheetFunctions.hasOwnProperty(fn.toLowerCase()) ? apply(fn, args) : match)
 };
 
 
@@ -65,6 +67,9 @@ const evalFormula = (x, cells) => {
 
     const cellRegex = /[A-J][1-9][0-9]?/gi;
     const cellExpanded = rangeExpanded.replace(cellRegex, (match) => idToText(match.toUpperCase()));
+
+    const functionExpanded = applyFunction(cellExpanded);
+    return functionExpanded === x ? functionExpanded : evalFormula(functionExpanded, cells);
 };
 
 window.onload = () => {
@@ -94,7 +99,7 @@ const update = (event) => {
     const element = event.target;
     const value = element.value.replace(/\s/g, '');
     if (!value.includes(element.id) && value.charAt(0) === '=') {
-
+        element.value = evalFormula(value.slice(1), Array.from(document.getElementById("container").children));
     }
 
 };
