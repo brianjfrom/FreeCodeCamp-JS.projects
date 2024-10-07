@@ -116,5 +116,40 @@ class ShoppingCart {
         totalCountPerProduct[dessert.id] = (totalCountPerProduct[dessert.id] || 0) + 1;
       });
       const currentProductCount = totalCountPerProduct[product.id];
+      const currentProductCountSpan = document.getElementById(`product-count-for-id${product.id}`)
+
+      currentProductCount > 1 ? currentProductCountSpan.textContent = `${currentProductCount}x` : productsContainer.innerHTML += `
+      <div class="product" id="dessert${id}">
+        <p>
+            <span class="product-count" id="product-count-for-id${id}">${name}</span>
+        </p>
+        <p>${price}</p>
+      </div>`;
     }
-};
+    getCounts() {
+        return this.items.length;
+    }
+
+    calculateTaxes(amount) {
+        return parseFloat(((this.taxRate / 100) * amount).toFixed(2));
+    };
+
+    calculateTotal(total, item) {
+        const subTotal = this.items.reduce((total, item) => total + item.price, 0)
+    }
+}
+
+const cart = new ShoppingCart();
+const addToCartBtns = document.getElementsByClassName('add-to-cart-btn');
+[...addToCartBtns].forEach( (btn) => {
+    btn.addEventListener("click", (event) => {
+        cart.addItem(Number(event.target.id), products);
+        totalNumberOfItems.textContent = cart.getCounts();
+    })
+}   
+);
+cartBtn.addEventListener("click", () => {
+    isCartShowing = !isCartShowing;
+    showHideCartSpan.textContent = isCartShowing ? "Hide" : "Show";
+    cartContainer.style.display = isCartShowing ? "block" : "none";
+});
