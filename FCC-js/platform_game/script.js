@@ -4,7 +4,7 @@ const startScreen = document.querySelector('.start-screen');
 const checkpointScreen = document.querySelector('.checkpoint-screen');
 const checkpointMessage = document.querySelector('.checkpoint-screen > p');
 // canvas start
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext("2d");
 const width = canvas.width;
 canvas.width = innerWidth;
 canvas.height = innerHeight;
@@ -18,7 +18,7 @@ const proportionalSize = size => {
 // open new class:
 class Player {
   constructor() {
-    this.velocity = {
+    this.position = {
       x: proportionalSize(10),
       y: proportionalSize(400),
     }
@@ -38,7 +38,7 @@ class Player {
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
 
-    if (this.position.y + this.height.y + this.velocity.y <= canvas.height) {
+    if (this.position.y + this.height + this.velocity.y <= canvas.height) {
 
       if (this.position.y < 0) {
         this.position.y = 0;
@@ -61,7 +61,8 @@ class Player {
 class Platform {
   constructor(x, y) {
     this.position = {
-      x, y
+      x,
+      y,
     };
     this.width = 200;
     this.height = proportionalSize(40);
@@ -73,9 +74,10 @@ class Platform {
 };
 
 class CheckPoint {
-  constructor(x, y, z) {
+  constructor(x, y) {
     this.position = {
-      x, y
+      x,
+      y,
     }
     this.width = proportionalSize(40);
     this.height = proportionalSize(70);
@@ -89,7 +91,6 @@ class CheckPoint {
   claim() {
     this.width = 0;
     this.height = 0;
-    CheckPoint = 0;
     this.position.y = Infinity;
     this.claimed = true;
   }
@@ -112,7 +113,7 @@ const platformPositions = [
   { x: 4700, y: proportionalSize(150) }
 ];
 
-const platforms = platformPositions.map(platform => new Platform(platform.x, platform.y));
+const platforms = platformPositions.map((platform) => new Platform(platform.x, platform.y));
 
 const checkpointPositions = [
   { x: 1170, y: proportionalSize(80), z: 1 },
@@ -120,15 +121,15 @@ const checkpointPositions = [
   { x: 4800, y: proportionalSize(80), z: 3 }
 ];
 
-const checkpoints = checkpointPositions.map(checkpoint => new CheckPoint(checkpoint.x, checkpoint.y, checkpoint.z));
+const checkpoints = checkpointPositions.map((checkpoint) => new CheckPoint(checkpoint.x, checkpoint.y, checkpoint.z));
 
 const animate = () => {
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  platforms.forEach(platform => platform.draw());
+  platforms.forEach((platform) => platform.draw());
 
-  checkpoints.forEach(checkpoint => checkpoint.draw());
+  checkpoints.forEach((checkpoint) => checkpoint.draw());
 
   player.update();
 
@@ -155,11 +156,11 @@ const animate = () => {
     const collisionDetectionRules = [
       player.position.y + player.height <= platform.position.y,
       player.position.y + player.height + player.velocity.y >= platform.position.y,
-      player.position.x >= platform.position.x - (player.width / 2),
-      player.position.x <= platform.position.x + platform.width - (player.width / 3) // check this later?
+      player.position.x >= platform.position.x - player.width / 2,
+      player.position.x <= platform.position.x + platform.width - player.width / 3 // check this later?
     ];
 
-    if (collisionDetectionRules.every(rule => rule)) {
+    if (collisionDetectionRules.every((rule) => rule)) {
       player.velocity.y = 0;
       return
     };
@@ -188,6 +189,16 @@ checkpoints.forEach((checkpoint, index, checkpoints) => {
     player.position.x - player.width <= checkpoint.position.x - checkpoint.width + player.width * 0.9,
     index === 0 || checkpoints[index - 1].claimed === true
   ];
+  if (checkpointDetectionRules.every((rule) => rule)) {
+    checkpoint.claim();
+    if (index === checkpoints.length - 1) {
+      isCheckpointCollisionDetectionActive = false;
+      showCheckpointScreen("You reached the final checkpoint!");
+      movePlayer("ArrowRight", 0, false);
+    } else if (player.position.x >= checkpoint.position.x && player.position.x  <= checkpoint.position.x + 40) {
+      showCheckpointScreen("You reached a checkpoint!");
+    }
+  };
 })
 
 
