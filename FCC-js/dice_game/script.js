@@ -20,7 +20,7 @@ let round = 1;
 const maxRolls = 3 // max number of rolls per round
 
 const toggleRules = () => {
-    if ( isModalShowing ) {
+    if (isModalShowing) {
         rulesContainer.style.display = "none";
         rulesBtn.textContent = "Show Rules"
     } else {
@@ -44,29 +44,51 @@ const updateRadioOption = (index, score) => {
 
     input.value = score;
     scoreSpans[index].textContent = `, score = ${score}`
- };
+};
 
- const getHighestDuplicates = (array) => {
+const getHighestDuplicates = (array) => {
     let duplicates = {};
-    console.log(diceValuesArr);
 
     array.forEach(number => {
-        duplicates[number] = (duplicates[number] || 0) +1
+        duplicates[number] = (duplicates[number] || 0) + 1
     });
-    console.log(duplicates);
 
     let maxCount = 0;
     let maxDuplicate
     let sum = array.reduce((sum, value) => sum + value, 0)
 
-    for(const [duplicate, count] of Object.entries(duplicates)){
+    for (const [duplicate, count] of Object.entries(duplicates)) {
         if (count > maxCount) {
             maxCount = count;
-            maxDuplicate = duplicate 
+            maxDuplicate = duplicate
         }
     }
-    console.log(sum)
- };
+    if (maxCount > 3) {
+        updateRadioOption(1, sum);
+    }
+    if (maxCount > 2) {
+        updateRadioOption(0, sum)
+    }
+    updateRadioOption(5, 0)
+
+};
+
+const resetRadioOptions = () => {
+    for (const input of scoreInputs) {
+        input.disabled = true;
+        input.checked = false;
+    }
+
+    for (const span of scoreSpans) {
+        span.textContent = '';
+    }
+};
+
+const updateScore = (selectedValue, achieved) => {
+    score =+ selectedValue;
+    totalScoreElement.textContent = score;
+    scoreHistory.innerHTML = `<li>${achieved} : ${selectedValue}</li>`;
+};
 
 const rollDice = () => {
 
@@ -76,19 +98,19 @@ const rollDice = () => {
     }
 
     diceValuesArr = [];
-    
-    
+
+
     listOfAllDice.forEach((dice, index) => {
         const randomValue = Math.floor(Math.random() * 6) + 1;
         diceValuesArr.push(randomValue);
-        dice.textContent = diceValuesArr[index];          
+        dice.textContent = diceValuesArr[index];
     })
 
+    resetRadioOptions()
     rolls++;
     updateStats()
-    getHighestDuplicates(diceValuesArr) 
+    getHighestDuplicates(diceValuesArr)
 };
-
 
 rollDiceBtn.addEventListener("click", rollDice);
 
