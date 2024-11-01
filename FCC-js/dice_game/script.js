@@ -73,6 +73,26 @@ const getHighestDuplicates = (array) => {
 
 };
 
+
+const detectFullHouse = (arr) => {
+const counts = {};
+
+for (const num of arr) {
+    if (counts[num]) {
+        counts[num]++;
+    } else {
+        counts[num] = 1;
+    }
+}
+const values = Object.values(counts)
+if (values.includes(3) && values.includes(2)) {
+    updateRadioOption(2, 25) 
+}
+
+updateRadioOption(5, 0);
+};
+
+
 const resetRadioOptions = () => {
     for (const input of scoreInputs) {
         input.disabled = true;
@@ -89,6 +109,29 @@ const updateScore = (selectedValue, achieved) => {
     totalScoreElement.textContent = score;
     scoreHistory.innerHTML += `<li>${achieved} : ${selectedValue}</li>`;
 };
+
+const checkForStraights = (arr) => {
+    const counts = {};
+
+    for (const num of arr) {
+        counts[num] = counts[num] ? counts[num] + 1 : 1
+    }
+    const keys = Object.keys(counts).join('')
+
+    if (keys === "12345" || keys === "23456" ) {
+        updateRadioOption(4, 40);
+    } 
+    if (keys.slice(0, 4) === '1234' || keys.slice(1, 5) === '2345' || keys.slice(0, 4) === '3456') {
+        updateRadioOption()
+    };
+
+    console.log(keys);
+};
+
+let array = [1, 2, 3, 4, 2]
+let array2 = [1, 2, 4, 3, 5]
+checkForStraights(array)
+checkForStraights(array2)
 
 const rollDice = () => {
 
@@ -110,6 +153,7 @@ const rollDice = () => {
     rolls++;
     updateStats()
     getHighestDuplicates(diceValuesArr)
+    detectFullHouse(diceValuesArr)
 };
 
 const resetGame = () => {
@@ -153,6 +197,8 @@ keepScoreBtn.addEventListener("click", () => {
         alert("Select a score");
     }
 });
+
+
 
 
 rollDiceBtn.addEventListener("click", rollDice);
