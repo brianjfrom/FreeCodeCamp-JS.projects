@@ -87,7 +87,7 @@ const resetRadioOptions = () => {
 const updateScore = (selectedValue, achieved) => {
     score =+ selectedValue;
     totalScoreElement.textContent = score;
-    scoreHistory.innerHTML = `<li>${achieved} : ${selectedValue}</li>`;
+    scoreHistory.innerHTML += `<li>${achieved} : ${selectedValue}</li>`;
 };
 
 const rollDice = () => {
@@ -111,6 +111,49 @@ const rollDice = () => {
     updateStats()
     getHighestDuplicates(diceValuesArr)
 };
+
+const resetGame = () => {
+    listOfAllDice.forEach(element => element.textContent = 0);
+
+    score = 0;
+    rolls = 0
+    round = 1;
+    totalScoreElement.textContent = score;
+    scoreHistory.innerHTML = ''
+    rollsElement.textContent = rolls;
+    roundElement.textContent = round;
+    resetRadioOptions();
+};
+
+keepScoreBtn.addEventListener("click", () => {
+    let value;
+    let id;
+
+    for (const input of scoreInputs) {
+        if (input.checked) {
+            value = input.value;
+            id = input.id;
+            break
+        };
+    }
+    if (value) {
+        rolls = 0;
+        round++
+        updateStats();
+        resetRadioOptions();
+        updateScore(value, id)
+
+        if (round > 6) {
+            setTimeout(() => {
+                alert(`Final score ${score}`);
+                resetGame();
+            }, 500);
+        }
+    } else {
+        alert("Select a score");
+    }
+});
+
 
 rollDiceBtn.addEventListener("click", rollDice);
 
