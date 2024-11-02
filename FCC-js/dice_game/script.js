@@ -11,13 +11,11 @@ const rulesBtn = document.getElementById('rules-btn');
 const rulesContainer = document.querySelector('.rules-container');
 
 let isModalShowing = false;
-
 let diceValuesArr = [];
-
 let rolls = 0;
 let score = 0;
 let round = 1;
-const maxRolls = 3 // max number of rolls per round
+const maxRolls = 3; // max number of rolls per round
 
 const toggleRules = () => {
     if (isModalShowing) {
@@ -54,7 +52,6 @@ const getHighestDuplicates = (array) => {
     });
 
     let maxCount = 0;
-    let maxDuplicate
     let sum = array.reduce((sum, value) => sum + value, 0)
 
     for (const [duplicate, count] of Object.entries(duplicates)) {
@@ -105,33 +102,32 @@ const resetRadioOptions = () => {
 };
 
 const updateScore = (selectedValue, achieved) => {
-    score =+ selectedValue;
+    score += Number(selectedValue);
     totalScoreElement.textContent = score;
     scoreHistory.innerHTML += `<li>${achieved} : ${selectedValue}</li>`;
 };
 
 const checkForStraights = (arr) => {
-    const counts = {};
+   const uniqueValues = [... new Set(arr)].sort((a,b) => a - b);
+    const sequence = uniqueValues.join('');
+   const largeStraight = ['12345', '23456'];
+   const smallStraight = ['1234', '2345', '3456'];
 
-    for (const num of arr) {
-        counts[num] = counts[num] ? counts[num] + 1 : 1
+   if (largeStraight.includes(sequence)) {
+    updateRadioOption(4, 40);
+    updateRadioOption(3, 30)
+    return
+   }
+
+   for (const small of smallStraight) {
+    if (sequence.includes(small)) {
+        updateRadioOption(3, 30);
+        updateRadioOption(5, 0)
+        return
     }
-    const keys = Object.keys(counts).join('')
-
-    if (keys === "12345" || keys === "23456" ) {
-        updateRadioOption(4, 40);
-    } 
-    if (keys.slice(0, 4) === '1234' || keys.slice(1, 5) === '2345' || keys.slice(0, 4) === '3456') {
-        updateRadioOption()
-    };
-
-    console.log(keys);
+   }
+   updateRadioOption(5, 0);
 };
-
-let array = [1, 2, 3, 4, 2]
-let array2 = [1, 2, 4, 3, 5]
-checkForStraights(array)
-checkForStraights(array2)
 
 const rollDice = () => {
 
@@ -154,6 +150,7 @@ const rollDice = () => {
     updateStats()
     getHighestDuplicates(diceValuesArr)
     detectFullHouse(diceValuesArr)
+    checkForStraights(diceValuesArr)
 };
 
 const resetGame = () => {
